@@ -44,8 +44,8 @@ namespace ApiAiSDK.Util
             public uint revTgt;         // Target position post bit-reversal
         }
 
-        public uint Log2Size { get; private set; } = 0;        // log2 of FFT size
-        public uint N { get; private set; } = 0;           // FFT size
+        public uint Log2Size = 0;        // log2 of FFT size
+        public uint N  = 0;           // FFT size
 
         private FFTElement[] m_X;       // Vector of linked list elements
 
