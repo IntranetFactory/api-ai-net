@@ -23,6 +23,9 @@ using System.Collections;
 using System.Net;
 using System.IO;
 using ApiAiSDK.Model;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace ApiAiSDK
 {
@@ -30,6 +33,12 @@ namespace ApiAiSDK
 	{
 		private readonly AIConfiguration config;
 		private readonly AIDataService dataService;
+
+        // prepare an array for multiple paralell requests, but for now we just work with 1
+        const int m = 1;
+        private Task[] tasks = new Task[m];
+        public List<AIResponse> AIResponseList { get; set; }
+
 
 		public ApiAi(AIConfiguration config)
 		{
@@ -55,6 +64,47 @@ namespace ApiAiSDK
 
 			return dataService.Request(request);
 		}
+
+
+        public void TextRequestStart(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                throw new ArgumentNullException("text");
+            }
+
+            TextRequestStart(new AIRequest(text));
+
+            return;
+        }
+
+
+        public void TextRequestStart(AIRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException("request");
+            }
+
+            AIResponseList = new List<AIResponse>();
+            for (var i = 0; i < m; i++)
+            {
+                tasks[i] = Task.Factory.StartNew(() => TextRequestExecAsync(request));
+            }
+        }
+
+        private void TextRequestExecAsync(AIRequest request) {
+            var response = dataService.Request(request);
+            AIResponseList.Add(response);
+        }
+
+        public AIResponse TextRequestFinish() {
+            Task.WaitAll(tasks);
+
+            if (AIResponseList.Count == 0) return null;
+
+            return AIResponseList[0];
+        }
 
         public AIResponse TextRequest(string text, RequestExtras requestExtras)
         {

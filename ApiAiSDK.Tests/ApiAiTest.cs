@@ -46,20 +46,23 @@ namespace ApiAiSDK.Tests
             Assert.AreEqual("Hi! How are you?", response.Result.Fulfillment.Speech);
 		}
 
-		[Test]
-		public void TextAIRequestTest()
-		{
-			var config = new AIConfiguration(SUBSCRIPTION_KEY, ACCESS_TOKEN, SupportedLanguage.English);
-			
-			var apiAi = new ApiAi(config);
 
-			var request = new AIRequest("hello");
-			var response = apiAi.TextRequest(request);
-			
-			Assert.IsNotNull(response);
-			Assert.AreEqual("greeting", response.Result.Action);
+        [Test]
+        public void TextAIRequestTestAsync()
+        {
+            var config = new AIConfiguration(SUBSCRIPTION_KEY, ACCESS_TOKEN, SupportedLanguage.English);
+
+            var apiAi = new ApiAi(config);
+
+            
+            apiAi.TextRequestStart("hello");
+            var response = apiAi.TextRequestFinish();
+
+            Assert.IsNotNull(response);
+            Assert.AreEqual("greeting", response.Result.Action);
             Assert.AreEqual("Hi! How are you?", response.Result.Fulfillment.Speech);
-		}
+        }
+
 
 		[Test]
 		public void VoiceRequestTest()
