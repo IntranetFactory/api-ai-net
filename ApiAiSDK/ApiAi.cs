@@ -106,6 +106,13 @@ namespace ApiAiSDK
             return AIResponseList[0];
         }
 
+        public List<AIResponse> TextRequestFinishList()
+        {
+            Task.WaitAll(tasks);         
+
+            return AIResponseList;
+        }
+
         public AIResponse TextRequest(string text, RequestExtras requestExtras)
         {
             if (string.IsNullOrEmpty(text)) {
